@@ -21,26 +21,34 @@ const Create = ({expenseInfo, setExpenseInfo}) => {
 
   const createExpense = (e) => {
     e.preventDefault();
-    
-    if ( !expense.expense_date || !expense.amount || !expense.expense_name ) {
-      alert("All fields are required");
+  
+    // Validation checks
+    if (!expense.expense_name.trim()) {
+      alert("Expense name is required");
       return;
     }
-    
+    if (!expense.amount || isNaN(expense.amount) || Number(expense.amount) <= 0) {
+      alert("Valid expense amount is required");
+      return;
+    }
+    if (!expense.expense_date) {
+      alert("Expense date is required");
+      return;
+    }
     ExpenseService.createExpense(expense)
-    .then((response) =>{
-      alert("Expense created successfully!");
-      setExpenseInfo( prevData => ([...prevData, response.data ]));
-      setExpense({
-        expense_name: '',
-        expense_date: '',
-        amount: ''
+      .then((response) => {
+        alert("Expense created successfully!");
+        setExpenseInfo((prevData) => [...prevData, response.data]);
+        setExpense({
+          expense_name: '',
+          expense_date: '',
+          amount: '',
+        });
+      })
+      .catch((err) => {
+        console.error(err);
       });
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  }
+  };
 
   return (
     <Container >
